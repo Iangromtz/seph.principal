@@ -1,14 +1,9 @@
 ﻿using Seph.Principal.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using Seph.Principal.Domain.Enums;
 
 namespace Seph.Principal.Domain.Entities
 {
-    /*clase que */
+    /*clase que representa una sesión de token de actualización */
     public class RefreshTokenSession: AuditableEntity
     {
         #region Constructors
@@ -39,5 +34,27 @@ namespace Seph.Principal.Domain.Entities
 
         public bool IsActive => Status == SessionStatus.Active && ExpiresAtUtc > DateTimeOffset.UtcNow;
         #endregion
+
+        #region Metodos de la clase
+        public static RefreshTokenSession Create(Guid userId, string tokenHash, string deviceId, string ipAddress, DateTimeOffset expiresAtUtc)
+       => new(userId, tokenHash, deviceId, ipAddress, expiresAtUtc);
+
+        public void Rotate(string tokenHash, DateTimeOffset expiresAtUtc, string ipAddress)
+        {
+            TokenHash = tokenHash;
+            ExpiresAtUtc = expiresAtUtc;
+            IpAddress = ipAddress;
+            Status = SessionStatus.Active;
+            Touch();
+        }
+
+        public void Revoke()
+        {
+            Status = SessionStatus.Revoked;
+            RevokedAtUtc = DateTimeOffset.UtcNow;
+            Touch();
+        }
+        #endregion
+
     }
 }
