@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
+    <Folder Include="Features\Administration\" />
+    <Folder Include="Features\Auth\Commands\" />
+    <Folder Include="Features\Users\" />
   </ItemGroup>
 
   <ItemGroup>
