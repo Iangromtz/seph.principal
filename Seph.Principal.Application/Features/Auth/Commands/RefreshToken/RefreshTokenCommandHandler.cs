@@ -24,10 +24,27 @@ namespace Seph.Principal.Application.Features.Auth.Commands.RefreshToken
              * Actualizar la sesión de usuario con el nuevo hash del token de refresco y la nueva fecha de expiración. */
             if (session is null || !session.IsActive || session.DeviceId != request.DeviceId)
             {
-                return ResponseFactory.Failure<AuthResponseDto>("Sesión inválida o expirada",HttpStatusCode.Code.Unauthorized)
+                return ResponseFactory.Failure<AuthResponseDto>("Sesión inválida o expirada", HttpStatusCode.Unauthorized);
             }
-
-
+            /*4. Guardar los cambios en la base de datos utilizando el IUnitOfWork. */
+            var user = await identityService.GetUserByIdAsync(session.UserId, cancellationToken);
+            if (user is null) 
+            {
+                session.Revoke();
+                /*5. Regresar una respuesta indicando el resultado de la operación, incluyendo el nuevo token de acceso 
+                 * y el nuevo token de refresco si la operación fue exitosa, o un mensaje de error si no lo fue. */
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+                return ResponseFactory.Failure<AuthResponseDto>("Usuario no encontrado", HttpStatusCode.Unauthorized)!;
+            }
+            /*6. Implementar medidas de seguridad adicionales, como la revocación de tokens de refresco comprometidos 
+             * o la limitación del número de tokens de refresco activos por usuario o dispositivo. */
+            var newRefreshToken = jwtTokenService.CreateRefreshToken();
+            session.Rotate(jwtTokenService.HashRefreshToken(newRefreshToken), DateTimeOffset.UtcNow.AddDays(7), request.IpAddress);
+            /*7. Asegurarse de que el proceso de refresco de tokens sea eficiente y escalable, especialmente en escenarios 
+             * con un gran número de usuarios y sesiones activas. */
+            sessionRepository.Update(session);
+            /*8. Probar exhaustivamente el proceso de refresco de tokens para garantizar su correcto funcionamiento y seguridad. */
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
         }
     }
