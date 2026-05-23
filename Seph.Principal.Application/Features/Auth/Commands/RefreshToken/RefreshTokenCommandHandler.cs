@@ -26,6 +26,7 @@ namespace Seph.Principal.Application.Features.Auth.Commands.RefreshToken
             {
                 return ResponseFactory.Failure<AuthResponseDto>("Sesión inválida o expirada", HttpStatusCode.Unauthorized);
             }
+            
             /*4. Guardar los cambios en la base de datos utilizando el IUnitOfWork. */
             var user = await identityService.GetUserByIdAsync(session.UserId, cancellationToken);
             if (user is null) 
@@ -36,6 +37,7 @@ namespace Seph.Principal.Application.Features.Auth.Commands.RefreshToken
                 await unitOfWork.SaveChangesAsync(cancellationToken);
                 return ResponseFactory.Failure<AuthResponseDto>("Usuario no encontrado", HttpStatusCode.Unauthorized)!;
             }
+            
             /*6. Implementar medidas de seguridad adicionales, como la revocación de tokens de refresco comprometidos 
              * o la limitación del número de tokens de refresco activos por usuario o dispositivo. */
             var newRefreshToken = jwtTokenService.CreateRefreshToken();
@@ -45,7 +47,15 @@ namespace Seph.Principal.Application.Features.Auth.Commands.RefreshToken
             sessionRepository.Update(session);
             /*8. Probar exhaustivamente el proceso de refresco de tokens para garantizar su correcto funcionamiento y seguridad. */
             await unitOfWork.SaveChangesAsync(cancellationToken);
-
+            /*9. Documentar claramente el proceso de refresco de tokens, incluyendo los requisitos de seguridad 
+             * y las mejores prácticas para su implementación. */
+            var response = new AuthResponseDto(
+             jwtTokenService.CreateAccessToken(user),
+             newRefreshToken,
+             DateTimeOffset.UtcNow.AddMinutes(15),
+             new UserSessionDto(user.Id, user.Email, user.FullName, user.Roles, user.Permissions));
+            /*10. Mantenerse actualizado con las últimas tendencias y vulnerabilidades en seguridad de autenticación y autorización,
+            return ResponseFactory.Success(response);
         }
     }
     
