@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Administration\" />
-    <Folder Include="Features\Auth\Commands\RevokeSession\" />
     <Folder Include="Features\Users\" />
   </ItemGroup>
 
