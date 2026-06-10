@@ -82,6 +82,10 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IRefreshTokenSessionRepository, RefreshTokenSessionRepository>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IInstitucionRepository,InstitucionRepository>();
+            services.AddScoped<IEmpleadosRepository, EmpleadosRepository>();
+
+            services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
+            services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();

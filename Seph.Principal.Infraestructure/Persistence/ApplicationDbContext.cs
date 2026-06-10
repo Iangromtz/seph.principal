@@ -11,11 +11,32 @@ namespace Seph.Principal.Infraestructure.Persistence
     {
         public DbSet<RefreshTokenSession> RefreshTokenSessions => Set<RefreshTokenSession>();
         public DbSet<Institucion> Instituciones => Set<Institucion>();
+        public DbSet<Empleado> Empleados => Set<Empleado>();
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            builder.Entity<ApplicationUser>(b =>
+            {
+                b.Ignore("CreatedBy");
+                b.Ignore("UpdatedBy");
+                b.Ignore("CreatedAtUtc");
+                b.Ignore("UpdatedAtUtc");
+            });
+
+            builder.Entity<ApplicationRole>(b =>
+            {
+                b.Ignore("CreatedBy");
+                b.Ignore("UpdatedBy");
+                b.Ignore("CreatedAtUtc");
+                b.Ignore("UpdatedAtUtc");
+            });
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
         }
     }
-
 }

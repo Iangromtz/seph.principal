@@ -12,7 +12,8 @@ namespace Seph.Principal.Application.Common.Interfaces
         Task<AuthenticatedUserDto> ValidateCredentialAsync(string email, string password, CancellationToken cancellationToken);
         Task<AuthenticatedUserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
         Task<IReadOnlyCollection<string>> GetUserPermissionsAsync(Guid userId, CancellationToken cancellationToken);
-
+        Task<Guid?> RegisterAsync(string fullName, string email, string password, CancellationToken cancellationToken);
         Task MarkLastLoginAsync(Guid userId, CancellationToken cancellationToken);
+        Task<AuthenticatedUserDto> FindOrCreateGoogleUserAsync(string email, string fullName, string googleId, CancellationToken cancellationToken);
     }
 }
