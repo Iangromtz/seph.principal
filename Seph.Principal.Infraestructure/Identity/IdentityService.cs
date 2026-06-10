@@ -11,7 +11,7 @@ namespace Seph.Principal.Infraestructure.Identity
         public async Task<AuthenticatedUserDto> ValidateCredentialAsync(string email, string password, CancellationToken cancellationToken)
         {
             var user = await userManager.Users.FirstOrDefaultAsync(
-                candidate => candidate.NormalizedEmail == email.ToUpperInvariant(),cancellationToken);
+                candidate => candidate.NormalizedEmail == email.ToUpperInvariant(), cancellationToken);
             if (user is null || !user.IsActive)
             {
                 return null;
@@ -49,14 +49,26 @@ namespace Seph.Principal.Infraestructure.Identity
          */
         public async Task MarkLastLoginAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await userManager.Users.FirstOrDefaultAsync(candidate => candidate.Id == userId, cancellationToken);
+            var user = await userManager.Users
+                .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
             if (user is null)
             {
                 return;
             }
 
             user.LastLoginAtUtc = DateTimeOffset.UtcNow;
-            await userManager.UpdateAsync(user);
+
+            try
+            {
+                await userManager.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("=== ERROR COMPLETO ===");
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
         }
 
 
@@ -74,6 +86,54 @@ namespace Seph.Principal.Infraestructure.Identity
 
             return new AuthenticatedUserDto(user.Id, user.Email ?? string.Empty, user.FullName, roles.ToList(), permissions);
         }
+
+        public async Task<AuthenticatedUserDto?> FindOrCreateGoogleUserAsync(string email, string fullName, string googleId, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users
+                .FirstOrDefaultAsync(u => u.NormalizedEmail == email.ToUpperInvariant(), cancellationToken);
+
+            if (user is null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FullName = fullName,
+                    IsActive = true,
+                    EmailConfirmed = true,  // Google ya verificó el email
+                };
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded) return null;
+
+                // Asigna un rol por defecto en user
+                await userManager.AddToRoleAsync(user, "User");
+            }
+
+            return await MapUserAsync(user);
+        }
+
+        public async Task<Guid?> RegisterAsync(string fullName, string email, string password, CancellationToken cancellationToken)
+        {
+            var existing = await userManager.FindByEmailAsync(email);
+            if (existing is not null) return null;
+
+            var user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                FullName = fullName,
+                IsActive = true,
+                EmailConfirmed = true
+            };
+
+            var result = await userManager.CreateAsync(user, password);
+            if (!result.Succeeded) return null;
+
+            await userManager.AddToRoleAsync(user, "User");
+
+            return user.Id;
+        }
+
 
     }
 }

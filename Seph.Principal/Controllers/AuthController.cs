@@ -1,14 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Seph.Principal.Application.Features.Auth.Commands.GoogleLogin;
 using Seph.Principal.Application.Features.Auth.Commands.Login;
 using Seph.Principal.Application.Features.Auth.Commands.RefreshToken;
+using Seph.Principal.Application.Features.Auth.Commands.Register;
 using Seph.Principal.Application.Features.Auth.Commands.RevokeSession;
 using Seph.Principal.Application.Features.Auth.DTOs;
 
 namespace Seph.Principal.Controllers
 {
-    public sealed class AuthController(ISender sender):ApiControllerBase
+    public sealed class AuthController(ISender sender) : ApiControllerBase
     {
         #region Login
         [AllowAnonymous]
@@ -23,6 +25,34 @@ namespace Seph.Principal.Controllers
 
             return FromResponse(response);
         }
+
+        public sealed record GoogleLoginRequest(string IdToken);
+
+        [AllowAnonymous]
+        [HttpPost("login/google")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GoogleLoginCommand(
+                request.IdToken,
+                Request.Headers["X-Device-Id"].FirstOrDefault() ?? "unknown",
+                HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"), cancellationToken);
+
+            return FromResponse(response);
+        }
+
+        #endregion
+
+        #region Register
+
+        public sealed record RegisterRequest(string FullName, string Email, string Password);
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterRequest request, CancellationToken cancellationToken)
+            => FromResponse(await sender.Send(
+                new RegisterCommand(request.FullName, request.Email, request.Password),
+                cancellationToken));
 
         #endregion
 
