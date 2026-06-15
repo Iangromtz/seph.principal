@@ -9,6 +9,7 @@ using Seph.Principal.Application.Common.Interfaces;
 using Seph.Principal.Domain.Repositories;
 using Seph.Principal.Infraestructure.Authentication;
 using Seph.Principal.Infraestructure.Authorization;
+using Seph.Principal.Infraestructure.Email;
 using Seph.Principal.Infraestructure.Identity;
 using Seph.Principal.Infraestructure.Persistence;
 using Seph.Principal.Infraestructure.Persistence.Repositories;
@@ -86,6 +87,8 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
 
             services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
             services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
+            services.AddScoped<IEmailService, SmtpEmailService>();
+            services.AddScoped<IEmailVerificationCodeRepository, EmailVerificationCodeRepository>();
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();

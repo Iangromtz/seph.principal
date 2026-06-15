@@ -7,7 +7,7 @@
         string StrCurp,
         long IdSexo,
         DateTime DateTimeFechaRegistro,
-        long IdUsuarioRegistro,
+        Guid IdUsuarioRegistro,
         bool BitActivo,
         DateTime DateTimeFechaBaja
         );

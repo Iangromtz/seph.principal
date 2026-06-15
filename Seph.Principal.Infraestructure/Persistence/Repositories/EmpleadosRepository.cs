@@ -29,7 +29,7 @@ namespace Seph.Principal.Infraestructure.Persistence.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<Empleado?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Empleado?> GetByIdAsync(long id, CancellationToken cancellationToken)
         {
             return await _context.Empleados
                 .FirstOrDefaultAsync(

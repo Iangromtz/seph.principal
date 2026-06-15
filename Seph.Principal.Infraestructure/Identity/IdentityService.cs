@@ -84,10 +84,21 @@ namespace Seph.Principal.Infraestructure.Identity
             var claims = await userManager.GetClaimsAsync(user);
             var permissions = claims.Where(claim => claim.Type == "permission").Select(claim => claim.Value).Distinct().ToArray();
 
-            return new AuthenticatedUserDto(user.Id, user.Email ?? string.Empty, user.FullName, roles.ToList(), permissions);
+            return new AuthenticatedUserDto(user.Id, user.Email ?? string.Empty, user.FullName, roles.ToList(), permissions, user.EmailConfirmed);
         }
 
-        public async Task<AuthenticatedUserDto?> FindOrCreateGoogleUserAsync(string email, string fullName, string googleId, CancellationToken cancellationToken)
+        /// <summary>
+        /// El método FindOrCreateGoogleUserAsync es un método público que se encarga de encontrar o crear un usuario a partir de la información proporcionada por Google.
+        /// Este método busca un usuario en la base de datos utilizando el correo electrónico proporcionado por Google.
+        /// Si no encuentra un usuario, crea uno nuevo con la información proporcionada (correo electrónico, nombre completo y ID de Google). 
+        /// Luego, asigna un rol por defecto ("User") al nuevo usuario y devuelve la información del usuario autenticado utilizando el método MapUserAsync.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="fullName"></param>
+        /// <param name="googleId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<AuthenticatedUserDto> FindOrCreateGoogleUserAsync(string email, string fullName, string googleId, CancellationToken cancellationToken)
         {
             var user = await userManager.Users
                 .FirstOrDefaultAsync(u => u.NormalizedEmail == email.ToUpperInvariant(), cancellationToken);
@@ -123,7 +134,7 @@ namespace Seph.Principal.Infraestructure.Identity
                 Email = email,
                 FullName = fullName,
                 IsActive = true,
-                EmailConfirmed = true
+                EmailConfirmed = false
             };
 
             var result = await userManager.CreateAsync(user, password);
@@ -134,6 +145,36 @@ namespace Seph.Principal.Infraestructure.Identity
             return user.Id;
         }
 
+        /// <summary>
+        /// El método GetUserIdByEmailAsync es un método público que se encarga de obtener el identificador de un usuario a partir de su correo electrónico.
+        /// Este método busca un usuario en la base de datos utilizando el correo electrónico proporcionado y devuelve su ID si lo encuentra o null si no lo encuentra.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<Guid?> GetUserIdByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(
+                candidate => candidate.NormalizedEmail == email.ToUpperInvariant(), cancellationToken);
+            return user?.Id;
+        }
 
+        public async Task<bool> IsEmailConfirmedAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(
+                candidate => candidate.Id == userId, cancellationToken);
+            return user?.EmailConfirmed ?? false;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(
+                candidate => candidate.Id == userId, cancellationToken);
+            if (user is null) return false;
+
+            user.EmailConfirmed = true;
+            var result = await userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
     }
 }
