@@ -8,5 +8,6 @@ using System.Threading.Tasks;
 
 namespace Seph.Principal.Application.Features.Auth.Commands.Register
 {
-    public sealed record RegisterCommand(string FullName, string Email, string Password) : IRequest<ResponseWrapper<Guid>>;
+    public sealed record RegisterCommand(string FullName, string Email, string Password)
+       : IRequest<ResponseWrapper<string>>;
 }

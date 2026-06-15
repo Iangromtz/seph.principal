@@ -5,7 +5,9 @@ using Seph.Principal.Application.Features.Auth.Commands.GoogleLogin;
 using Seph.Principal.Application.Features.Auth.Commands.Login;
 using Seph.Principal.Application.Features.Auth.Commands.RefreshToken;
 using Seph.Principal.Application.Features.Auth.Commands.Register;
+using Seph.Principal.Application.Features.Auth.Commands.ResendVerificationCode;
 using Seph.Principal.Application.Features.Auth.Commands.RevokeSession;
+using Seph.Principal.Application.Features.Auth.Commands.VerifyEmail;
 using Seph.Principal.Application.Features.Auth.DTOs;
 
 namespace Seph.Principal.Controllers
@@ -48,12 +50,10 @@ namespace Seph.Principal.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(
-            [FromBody] RegisterRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
             => FromResponse(await sender.Send(
                 new RegisterCommand(request.FullName, request.Email, request.Password),
                 cancellationToken));
-
         #endregion
 
         #region Refresh Token
@@ -68,6 +68,28 @@ namespace Seph.Principal.Controllers
 
             return FromResponse(response);
         }
+        #endregion
+
+        #region Verify Email
+        public sealed record VerifyEmailRequest(string Email, string Code);
+
+        [AllowAnonymous]
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request, CancellationToken cancellationToken)
+            => FromResponse(await sender.Send(
+                new VerifyEmailCommand(request.Email, request.Code),
+                cancellationToken));
+        #endregion
+
+        #region Resend Verification Code
+        public sealed record ResendVerificationCodeRequest(string Email);
+
+        [AllowAnonymous]
+        [HttpPost("resend-verification")]
+        public async Task<IActionResult> ResendVerificationCode([FromBody] ResendVerificationCodeRequest request, CancellationToken cancellationToken)
+            => FromResponse(await sender.Send(
+                new ResendVerificationCodeCommand(request.Email),
+                cancellationToken));
         #endregion
 
         #region logout
