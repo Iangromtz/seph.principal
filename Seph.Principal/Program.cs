@@ -38,6 +38,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials());
 });
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -53,22 +54,22 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-   app.UseSwagger();
-   app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.UseCors("Frontend");
-app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("Frontend");
+
+app.UseRateLimiter();
+
 app.MapControllers();
 
 app.Run();

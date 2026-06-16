@@ -37,7 +37,7 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             /*El método AddIdentity se utiliza para configurar los servicios de identidad en la aplicación. 
              * Aquí se establecen las políticas de contraseña, bloqueo de cuenta y requisitos de usuario, 
              * así como la configuración para usar Entity Framework Core como el almacén de datos para la identidad.*/
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            services.AddIdentityCore<ApplicationUser>(options =>
             {
 
                 options.Password.RequiredLength = 12;
@@ -51,12 +51,15 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
                 options.User.RequireUniqueEmail = true;
 
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
+                .AddSignInManager();
             /*El método AddAuthentication se utiliza para configurar los servicios de autenticación en la aplicación.
-             */ 
+             */
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
+                .AddJwtBearer(options =>
+                {
 
                     options.RequireHttpsMetadata = true;
                     options.SaveToken = false;
@@ -71,6 +74,20 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromSeconds(30)
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine($"JWT Auth failed: {context.Exception.Message}");
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            Console.WriteLine($"JWT Challenge: {context.Error} - {context.ErrorDescription}");
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             /*El método AddAuthorizationBuilder se utiliza para configurar los servicios de autorización en la aplicación.
@@ -82,7 +99,7 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<IRefreshTokenSessionRepository, RefreshTokenSessionRepository>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IInstitucionRepository,InstitucionRepository>();
+            services.AddScoped<IInstitucionRepository, InstitucionRepository>();
             services.AddScoped<IEmpleadosRepository, EmpleadosRepository>();
 
             services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
@@ -92,7 +109,7 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            
+
             return services;
         }
     }
