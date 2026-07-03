@@ -20,7 +20,7 @@ namespace Seph.Principal.Domain.Entities
 
         public long IdTipoPersonal { get; set; }
 
-        public int IdTipoContrato { get; set; }
+        public long IdTipoContrato { get; set; }
 
         public string StrOtroTipoContrato { get; set; } = string.Empty;
 
@@ -48,7 +48,7 @@ namespace Seph.Principal.Domain.Entities
             long idEmpleado,
             long idInstitucion,
             long idTipoPersonal,
-            int idTipoContrato,
+            long idTipoContrato,
             string strOtroTipoContrato,
             long idArea,
             DateTime dateTimeFechaRegistro,
