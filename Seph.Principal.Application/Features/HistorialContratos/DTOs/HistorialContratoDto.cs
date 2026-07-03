@@ -13,7 +13,7 @@ namespace Seph.Principal.Application.Features.HistorialContratos.DTOs
         long IdEmpleado,
         long IdInstitucion,
         long IdTipoPersonal,
-        int IdTipoContrato,
+        long IdTipoContrato,
         string? StrOtroTipoContrato,
         long IdArea,
         DateTime DateTimeFechaRegistro,

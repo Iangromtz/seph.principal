@@ -51,8 +51,9 @@ namespace Seph.Principal.Infraestructure.Persistence.Configurations
             builder.Property(x => x.BitActivo)
                 .IsRequired();
 
-            builder.Property(x => x.DateTimeFechaBaja)
-                .IsRequired();
+            /* DateTimeFechaBaja permanece NULL mientras el contrato está activo,
+            por eso NO se marca como requerida (la columna real permite NULL). */
+            builder.Property(x => x.DateTimeFechaBaja);
 
             builder.Property(x => x.IdUsuarioRegistro)
                 .IsRequired();

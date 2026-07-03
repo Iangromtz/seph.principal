@@ -15,7 +15,7 @@ namespace Seph.Principal.Application.Features.HistorialContratos.Commands
         long IdEmpleado,
         long IdInstitucion,
         long IdTipoPersonal,
-        int IdTipoContrato,
+        long IdTipoContrato,
         string? StrOtroTipoContrato,
         long IdArea,
         DateTime DateTimeFechaRegistro,
