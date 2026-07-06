@@ -45,5 +45,11 @@ namespace Seph.Principal.Application.Common.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<bool> ConfirmEmailAsync(Guid userId, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Indica si una institución tiene usuarios activos (Admin/Usuario) asignados.
+        /// Se usa para impedir que se desactive una institución que sigue en uso.
+        /// </summary>
+        Task<bool> HasActiveUsersInInstitutionAsync(long idInstitucion, CancellationToken cancellationToken);
     }
 }

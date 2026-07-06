@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# Archivos subidos en desarrollo local (Seph.ImageServer)
+Seph.ImageServer/uploads/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

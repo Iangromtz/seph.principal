@@ -16,7 +16,9 @@ namespace Seph.Principal.Application.Features.Empleados.Queries.GetRegistrosPers
         ICatTipoPersonalRepository catTipoPersonalRepository,
         ICatTipoContratoRepository catTipoContratoRepository,
         ICatAreaRepository catAreaRepository,
-        IInstitucionRepository institucionRepository)
+        IInstitucionRepository institucionRepository,
+        ICatPerfilAcademicoRepository catPerfilAcademicoRepository,
+        IMapEmpleadoPerfilAcademicoRepository mapEmpleadoPerfilAcademicoRepository)
         : IRequestHandler<GetRegistrosPersonalQuery, ResponseWrapper<IReadOnlyList<RegistroPersonalDto>>>
     {
         public async Task<ResponseWrapper<IReadOnlyList<RegistroPersonalDto>>> Handle(
@@ -29,38 +31,51 @@ namespace Seph.Principal.Application.Features.Empleados.Queries.GetRegistrosPers
             var tiposContrato = await catTipoContratoRepository.GetAllAsync(cancellationToken);
             var areas = await catAreaRepository.GetAllAsync(cancellationToken);
             var instituciones = await institucionRepository.GetAllAsync(cancellationToken);
+            var perfilesAcademicos = await catPerfilAcademicoRepository.GetAllAsync(cancellationToken);
 
-            IReadOnlyList<RegistroPersonalDto> response = empleados
+            var empleadosDelUsuario = empleados
                 .Where(empleado => empleado.IdUsuarioRegistro == request.IdUsuarioRegistro)
-                .OrderByDescending(empleado => empleado.DateTimeFechaRegistro)
-                .Select(empleado =>
-                {
-                    // Contrato más reciente del empleado (null si el registro quedó incompleto).
-                    var contrato = historiales
-                        .Where(historial => historial.IdEmpleado == empleado.Id)
-                        .OrderByDescending(historial => historial.DateTimeFechaRegistro)
-                        .FirstOrDefault();
-
-                    return new RegistroPersonalDto(
-                        empleado.Id,
-                        empleado.StrNombre ?? string.Empty,
-                        empleado.StrApellidoPat ?? string.Empty,
-                        empleado.StrApellidoMat ?? string.Empty,
-                        empleado.StrCurp ?? string.Empty,
-                        sexos.FirstOrDefault(sexo => sexo.Id == empleado.IdSexo)?.StrValor ?? string.Empty,
-                        empleado.DateTimeFechaRegistro,
-                        empleado.BitActivo,
-                        contrato is not null,
-                        contrato is null ? null : instituciones.FirstOrDefault(i => i.Id == contrato.IdInstitucion)?.StrNombre,
-                        contrato is null ? null : tiposPersonal.FirstOrDefault(t => t.Id == contrato.IdTipoPersonal)?.StrValor,
-                        contrato is null ? null : tiposContrato.FirstOrDefault(t => t.Id == contrato.IdTipoContrato)?.StrValor,
-                        contrato is null ? null : areas.FirstOrDefault(a => a.Id == contrato.IdArea)?.StrValor,
-                        contrato?.DateFechaIngreso);
-                })
                 .ToList();
 
+            var lista = new List<RegistroPersonalDto>();
+
+            foreach (var empleado in empleadosDelUsuario.OrderByDescending(e => e.DateTimeFechaRegistro))
+            {
+                // Contrato más reciente del empleado (null si el registro quedó incompleto).
+                var contrato = historiales
+                    .Where(historial => historial.IdEmpleado == empleado.Id)
+                    .OrderByDescending(historial => historial.DateTimeFechaRegistro)
+                    .FirstOrDefault();
+
+                var mapaPerfiles = await mapEmpleadoPerfilAcademicoRepository.GetByEmpleadoIdAsync(empleado.Id, cancellationToken);
+                var nombresPerfiles = mapaPerfiles
+                    .Select(m => perfilesAcademicos.FirstOrDefault(p => p.Id == m.IdCatPerfilAcademico)?.StrValor)
+                    .Where(nombre => nombre is not null)
+                    .Select(nombre => nombre!)
+                    .ToList();
+
+                lista.Add(new RegistroPersonalDto(
+                    empleado.Id,
+                    empleado.StrNombre ?? string.Empty,
+                    empleado.StrApellidoPat ?? string.Empty,
+                    empleado.StrApellidoMat ?? string.Empty,
+                    empleado.StrCurp ?? string.Empty,
+                    sexos.FirstOrDefault(sexo => sexo.Id == empleado.IdSexo)?.StrValor ?? string.Empty,
+                    empleado.DateTimeFechaRegistro,
+                    empleado.BitActivo,
+                    empleado.BitDatosAcademicosCompletos,
+                    contrato is not null,
+                    empleado.StrSNII,
+                    nombresPerfiles,
+                    contrato is null ? null : instituciones.FirstOrDefault(i => i.Id == contrato.IdInstitucion)?.StrNombre,
+                    contrato is null ? null : tiposPersonal.FirstOrDefault(t => t.Id == contrato.IdTipoPersonal)?.StrValor,
+                    contrato is null ? null : tiposContrato.FirstOrDefault(t => t.Id == contrato.IdTipoContrato)?.StrValor,
+                    contrato is null ? null : areas.FirstOrDefault(a => a.Id == contrato.IdArea)?.StrValor,
+                    contrato?.DateFechaIngreso));
+            }
+
             return ResponseFactory.Success(
-                response,
+                (IReadOnlyList<RegistroPersonalDto>)lista,
                 "Registros de personal obtenidos correctamente");
         }
     }

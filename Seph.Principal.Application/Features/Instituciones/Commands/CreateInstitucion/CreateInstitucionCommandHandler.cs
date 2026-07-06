@@ -37,6 +37,8 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.CreateInsti
                 institucion.StrSiglas,
                 institucion.StrCct,
                 institucion.StrDireccion,
+                institucion.DateFechaCreacion,
+                institucion.StrDecretoCreacion,
                 institucion.StrSitioWeb,
                 institucion.StrCorreoInstitucional,
                 institucion.StrTelefonoInstitucional,

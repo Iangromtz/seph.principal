@@ -16,6 +16,9 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<CatTipoPersonal> CatTipoPersonal => Set<CatTipoPersonal>();
         public DbSet<CatTipoContrato> CatTipoContratos => Set<CatTipoContrato>();
         public DbSet<CatArea> CatAreas => Set<CatArea>();
+        public DbSet<CatPerfilAcademico> CatPerfilesAcademicos => Set<CatPerfilAcademico>();
+        public DbSet<CatMunicipio> CatMunicipios => Set<CatMunicipio>();
+        public DbSet<MapEmpleadoPerfilAcademico> MapEmpleadoPerfilesAcademicos => Set<MapEmpleadoPerfilAcademico>();
         public DbSet<HistorialContrato> HistorialContratos => Set<HistorialContrato>();
         public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();
 

@@ -105,6 +105,9 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<ICatTipoPersonalRepository, CatTipoRepository>();
             services.AddScoped<ICatTipoContratoRepository, CatTipoContratoRepository>();
             services.AddScoped<ICatAreaRepository, CatAreaRepository>();
+            services.AddScoped<ICatMunicipioRepository, CatMunicipioRepository>();
+            services.AddScoped<ICatPerfilAcademicoRepository, CatPerfilAcademicoRepository>();
+            services.AddScoped<IMapEmpleadoPerfilAcademicoRepository, MapEmpleadoPerfilAcademicoRepository>();
             services.AddScoped<IHistorialContratoRepository, HistorialContratoRepository>();
             services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
             services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();

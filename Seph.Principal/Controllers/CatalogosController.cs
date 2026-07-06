@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Seph.Principal.Application.Features.CatArea.Queries.GetArea;
+using Seph.Principal.Application.Features.CatMunicipio.Queries.GetCatMunicipio;
+using Seph.Principal.Application.Features.CatPerfilAcademico.Queries.GetCatPerfilAcademico;
 using Seph.Principal.Application.Features.CatSexo.Queries.GetCatsexo;
 using Seph.Principal.Application.Features.CatTipoContrato.Queries.GetCatTipoContrato;
 using Seph.Principal.Application.Features.CatTipoPersonal.Queries.GetCatTipoPersonal;
@@ -44,6 +46,21 @@ namespace Seph.Principal.Controllers
             return Ok(response);
         }
 
+        [HttpGet("perfiles-academicos")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPerfilesAcademicos(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GetCatPerfilAcademicoQuery(), cancellationToken);
+            return Ok(response);
+        }
+
+        [HttpGet("municipios")]
+        [Authorize]
+        public async Task<IActionResult> GetMunicipios(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GetCatMunicipioQuery(), cancellationToken);
+            return Ok(response);
+        }
 
     }
 }
