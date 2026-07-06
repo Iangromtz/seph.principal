@@ -199,5 +199,11 @@ namespace Seph.Principal.Infraestructure.Identity
             var result = await userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async Task<bool> HasActiveUsersInInstitutionAsync(long idInstitucion, CancellationToken cancellationToken)
+        {
+            return await userManager.Users.AnyAsync(
+                u => u.IdInstitucion == idInstitucion && u.IsActive, cancellationToken);
+        }
     }
 }

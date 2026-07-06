@@ -37,6 +37,12 @@ namespace Seph.Principal.Infraestructure.Persistence.Configurations
             builder.Property(x => x.IdSexo)
                 .IsRequired();
 
+            builder.Property(x => x.StrSNII)
+                .HasMaxLength(12);
+
+            builder.Property(x => x.BitDatosAcademicosCompletos)
+                .IsRequired();
+
             builder.Property(x => x.DateTimeFechaRegistro)
                 .IsRequired();
 

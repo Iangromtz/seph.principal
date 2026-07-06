@@ -15,6 +15,8 @@ namespace Seph.Principal.Domain.Entities
         public string? StrCurp { get; set; }
         public long IdSexo { get; set; }
         public long IdInstitucion { get; set; }
+        public string? StrSNII { get; set; }
+        public bool BitDatosAcademicosCompletos { get; set; }
         public DateTime DateTimeFechaRegistro { get; set; }
         public Guid IdUsuarioRegistro { get; set; }
         public bool BitActivo { get; set; }

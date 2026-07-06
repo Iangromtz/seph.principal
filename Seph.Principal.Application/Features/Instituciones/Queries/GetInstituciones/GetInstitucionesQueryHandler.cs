@@ -17,6 +17,8 @@ namespace Seph.Principal.Application.Features.Instituciones.Queries.GetInstituci
                         x.StrSiglas,
                         x.StrCct,
                         x.StrDireccion,
+                        x.DateFechaCreacion,
+                        x.StrDecretoCreacion,
                         x.StrSitioWeb,
                         x.StrCorreoInstitucional,
                         x.StrTelefonoInstitucional,

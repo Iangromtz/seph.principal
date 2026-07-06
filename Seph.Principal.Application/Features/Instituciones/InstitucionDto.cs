@@ -9,6 +9,8 @@ namespace Seph.Principal.Application.Features.Instituciones
         string? StrSiglas,
         string? StrCct,
         string? StrDireccion,
+        DateTime? DateFechaCreacion,
+        string? StrDecretoCreacion,
         string? StrSitioWeb,
         string? StrCorreoInstitucional,
         string? StrTelefonoInstitucional,

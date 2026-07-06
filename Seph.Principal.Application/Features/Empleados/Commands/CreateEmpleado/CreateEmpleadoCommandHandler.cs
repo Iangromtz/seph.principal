@@ -29,7 +29,7 @@ namespace Seph.Principal.Application.Features.Empleados.Commands.CreateEmpleado
 
 
             await empleadosRepository.AddAsync(empleado, cancellationToken);
-            
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return ResponseFactory.Success(
