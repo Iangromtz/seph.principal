@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 namespace Seph.ImageServer.Controllers
 {
     /// <summary>
-    /// Sube y sirve archivos (INE y fotografía de trabajador) de los empleados.
-    /// Protegido con el mismo JWT que emite Seph.Principal: cualquier usuario
+    /// Sube y sirve archivos de los empleados.
+    /// Protegido con el mismo JWT de Seph.Principal: cualquier usuario
     /// autenticado en el sistema principal puede llamar a este servicio.
     /// </summary>
     [Authorize]
@@ -35,7 +35,7 @@ namespace Seph.ImageServer.Controllers
         private static partial Regex FileNamePattern();
 
         /// <summary>
-        /// Sube un archivo (INE o fotografía). Devuelve la ruta relativa a
+        /// Sube un archivo. Devuelve la ruta relativa a
         /// guardar en el registro del empleado (Empleado.StrRutaIne / StrRutaFotografia).
         /// POST /api/v1/images/upload
         /// </summary>
@@ -84,8 +84,8 @@ namespace Seph.ImageServer.Controllers
         }
 
         /// <summary>
-        /// Descarga un archivo previamente subido. Valida que el nombre de
-        /// archivo tenga el formato esperado (evita path traversal).
+        /// Descarga un archivo que haya sido subido. Valida que el nombre de
+        /// archivo tenga el formato esperado.
         /// GET /api/v1/images/{tipo}/{fileName}
         /// </summary>
         [HttpGet("{tipo}/{fileName}")]
