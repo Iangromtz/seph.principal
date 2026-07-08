@@ -14,7 +14,8 @@ namespace Seph.Principal.Application.Features.Users.Commands.CreateUser
         public async Task<ResponseWrapper<UserCreatedDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var userId = await identityService.CreateUserWithRoleAsync(
-                request.FullName, request.Email, request.Password, UserRole, request.IdInstitucion, cancellationToken);
+     request.FullName, request.Email, request.Password, UserRole, request.IdInstitucion,
+     null, null, null, null, null, cancellationToken);
 
             if (userId is null)
                 return ResponseFactory.Failure<UserCreatedDto>("El correo ya está registrado", HttpStatusCode.Conflict);

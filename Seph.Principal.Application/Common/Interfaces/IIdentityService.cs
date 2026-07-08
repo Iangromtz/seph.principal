@@ -1,4 +1,5 @@
 ﻿using Seph.Principal.Application.Features.Auth.DTOs;
+using Seph.Principal.Application.Features.Users.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,10 @@ namespace Seph.Principal.Application.Common.Interfaces
         /// Usado por el SuperAdmin para crear Admins y por los Admins para crear usuarios de su institución.
         /// Devuelve el Id del usuario creado, o null si el correo ya existe o falla la creación.
         /// </summary>
-        Task<Guid?> CreateUserWithRoleAsync(string fullName, string email, string password, string role, long? idInstitucion, CancellationToken cancellationToken);
+        Task<Guid?> CreateUserWithRoleAsync(
+            string fullName, string email, string password, string role, long? idInstitucion,
+            string? rutaIne, string? rutaFotografia, string? rfc, string? snii, long? idNivelAcademico,
+            CancellationToken cancellationToken);
         Task MarkLastLoginAsync(Guid userId, CancellationToken cancellationToken);
         Task<AuthenticatedUserDto> FindOrCreateGoogleUserAsync(string email, string fullName, string googleId, CancellationToken cancellationToken);
         /// <summary>
@@ -51,5 +55,28 @@ namespace Seph.Principal.Application.Common.Interfaces
         /// Se usa para impedir que se desactive una institución que sigue en uso.
         /// </summary>
         Task<bool> HasActiveUsersInInstitutionAsync(long idInstitucion, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Obtiene todos los usuarios que tienen un rol específico (ej. "Admin" = Enlaces Académicos).
+        /// </summary>
+        Task<IReadOnlyList<AdminUserRawDto>> GetUsersByRoleAsync(string role, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Obtiene un usuario por id en su forma cruda (para detalle/edición de Enlaces Académicos).
+        /// </summary>
+        Task<AdminUserRawDto?> GetUserByIdRawAsync(Guid userId, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Activa o desactiva un usuario (IsActive). Devuelve false si el usuario no existe.
+        /// </summary>
+        Task<bool> SetUserActiveStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Actualiza los datos editables de un Enlace Académico. Devuelve false si el usuario no existe.
+        /// </summary>
+        Task<bool> UpdateUserDetailsAsync(
+            Guid userId, string fullName, long? idInstitucion,
+            string? rutaIne, string? rutaFotografia, string? rfc, string? snii, long? idNivelAcademico,
+            CancellationToken cancellationToken);
     }
 }

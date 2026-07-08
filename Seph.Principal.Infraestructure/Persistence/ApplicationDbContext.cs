@@ -18,6 +18,8 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<CatArea> CatAreas => Set<CatArea>();
         public DbSet<CatPerfilAcademico> CatPerfilesAcademicos => Set<CatPerfilAcademico>();
         public DbSet<CatMunicipio> CatMunicipios => Set<CatMunicipio>();
+        public DbSet<CatNivelAcademico> CatNivelAcademicos => Set<CatNivelAcademico>();
+        public DbSet<MapUserPerfilAcademico> MapUserPerfilesAcademicos => Set<MapUserPerfilAcademico>();
         public DbSet<MapEmpleadoPerfilAcademico> MapEmpleadoPerfilesAcademicos => Set<MapEmpleadoPerfilAcademico>();
         public DbSet<HistorialContrato> HistorialContratos => Set<HistorialContrato>();
         public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();

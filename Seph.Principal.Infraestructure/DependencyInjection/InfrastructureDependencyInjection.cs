@@ -113,6 +113,8 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
             services.AddScoped<IEmailService, SmtpEmailService>();
             services.AddScoped<IEmailVerificationCodeRepository, EmailVerificationCodeRepository>();
+            services.AddScoped<ICatNivelAcademicoRepository, CatNivelAcademicoRepository>();
+            services.AddScoped<IMapUserPerfilAcademicoRepository, MapUserPerfilAcademicoRepository>();
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
