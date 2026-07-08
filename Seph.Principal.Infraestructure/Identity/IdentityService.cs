@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Seph.Principal.Application.Common.Interfaces;
 using Seph.Principal.Application.Features.Auth.DTOs;
+using Seph.Principal.Application.Features.Users.DTOs;
 
 namespace Seph.Principal.Infraestructure.Identity
 {
@@ -145,7 +146,10 @@ namespace Seph.Principal.Infraestructure.Identity
             return user.Id;
         }
 
-        public async Task<Guid?> CreateUserWithRoleAsync(string fullName, string email, string password, string role, long? idInstitucion, CancellationToken cancellationToken)
+        public async Task<Guid?> CreateUserWithRoleAsync(
+            string fullName, string email, string password, string role, long? idInstitucion,
+            string? rutaIne, string? rutaFotografia, string? rfc, string? snii, long? idNivelAcademico,
+            CancellationToken cancellationToken)
         {
             var existing = await userManager.FindByEmailAsync(email);
             if (existing is not null) return null;
@@ -156,15 +160,19 @@ namespace Seph.Principal.Infraestructure.Identity
                 Email = email,
                 FullName = fullName,
                 IsActive = true,
-                EmailConfirmed = true,        // creado por un administrador: se da por verificado
-                IdInstitucion = idInstitucion
+                EmailConfirmed = true,
+                IdInstitucion = idInstitucion,
+                StrRutaIne = rutaIne,
+                StrRutaFotografia = rutaFotografia,
+                StrRFC = rfc,
+                StrSNII = snii,
+                IdCatNivelAcademico = idNivelAcademico
             };
 
             var result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded) return null;
 
             await userManager.AddToRoleAsync(user, role);
-
             return user.Id;
         }
 
@@ -205,5 +213,52 @@ namespace Seph.Principal.Infraestructure.Identity
             return await userManager.Users.AnyAsync(
                 u => u.IdInstitucion == idInstitucion && u.IsActive, cancellationToken);
         }
+
+        public async Task<IReadOnlyList<AdminUserRawDto>> GetUsersByRoleAsync(string role, CancellationToken cancellationToken)
+        {
+            var usuarios = await userManager.GetUsersInRoleAsync(role);
+            return usuarios.Select(MapToRawDto).ToList();
+        }
+
+        public async Task<AdminUserRawDto?> GetUserByIdRawAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            return user is null ? null : MapToRawDto(user);
+        }
+
+        public async Task<bool> SetUserActiveStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            if (user is null) return false;
+
+            user.IsActive = isActive;
+            var result = await userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> UpdateUserDetailsAsync(
+            Guid userId, string fullName, long? idInstitucion,
+            string? rutaIne, string? rutaFotografia, string? rfc, string? snii, long? idNivelAcademico,
+            CancellationToken cancellationToken)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            if (user is null) return false;
+
+            user.FullName = fullName;
+            user.IdInstitucion = idInstitucion;
+            user.StrRutaIne = rutaIne;
+            user.StrRutaFotografia = rutaFotografia;
+            user.StrRFC = rfc;
+            user.StrSNII = snii;
+            user.IdCatNivelAcademico = idNivelAcademico;
+
+            var result = await userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        private static AdminUserRawDto MapToRawDto(ApplicationUser user) => new(
+            user.Id, user.FullName, user.Email ?? string.Empty, user.IdInstitucion,
+            user.StrRFC, user.StrSNII, user.IdCatNivelAcademico,
+            user.StrRutaIne, user.StrRutaFotografia, user.IsActive);
     }
 }

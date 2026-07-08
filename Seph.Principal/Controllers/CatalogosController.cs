@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Seph.Principal.Application.Features.CatArea.Queries.GetArea;
 using Seph.Principal.Application.Features.CatMunicipio.Queries.GetCatMunicipio;
+using Seph.Principal.Application.Features.CatNivelAcademico.Queries.GetCatNivelAcademico;
 using Seph.Principal.Application.Features.CatPerfilAcademico.Queries.GetCatPerfilAcademico;
 using Seph.Principal.Application.Features.CatSexo.Queries.GetCatsexo;
 using Seph.Principal.Application.Features.CatTipoContrato.Queries.GetCatTipoContrato;
@@ -59,6 +60,14 @@ namespace Seph.Principal.Controllers
         public async Task<IActionResult> GetMunicipios(CancellationToken cancellationToken)
         {
             var response = await sender.Send(new GetCatMunicipioQuery(), cancellationToken);
+            return Ok(response);
+        }
+
+        [HttpGet("niveles-academicos")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetNivelesAcademicos(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GetCatNivelAcademicoQuery(), cancellationToken);
             return Ok(response);
         }
 

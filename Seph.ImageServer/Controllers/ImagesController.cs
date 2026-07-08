@@ -120,6 +120,35 @@ namespace Seph.ImageServer.Controllers
             return File(stream, contentType);
         }
 
+        /// <summary>
+        /// Elimina un archivo previamente subido (se usa cuando se reemplaza
+        /// el INE/foto de un registro para no acumular archivos huérfanos).
+        /// DELETE /api/v1/images/{tipo}/{fileName}
+        /// </summary>
+        [HttpDelete("{tipo}/{fileName}")]
+        public IActionResult Delete(string tipo, string fileName)
+        {
+            if (!AllowedExtensionsByTipo.ContainsKey(tipo))
+            {
+                return NotFound();
+            }
+
+            if (!FileNamePattern().IsMatch(fileName))
+            {
+                return NotFound();
+            }
+
+            var rootPath = ResolveRootPath();
+            var fullPath = Path.Combine(rootPath, tipo, fileName);
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+
+            return NoContent();
+        }
+
         private string ResolveRootPath()
         {
             var configuredPath = uploadsOptions.Value.RootPath;

@@ -15,5 +15,11 @@ namespace Seph.Principal.Infraestructure.Identity
         /// NULL para el SuperAdmin, que no está atado a una institución.
         /// </summary>
         public long? IdInstitucion { get; set; }
+        public string? StrRutaIne { get; set; }
+        public string? StrRutaFotografia { get; set; }
+        public string? StrRFC { get; set; }
+        public string? StrSNII { get; set; }
+        public long? IdCatNivelAcademico { get; set; }
+
     }
 }
