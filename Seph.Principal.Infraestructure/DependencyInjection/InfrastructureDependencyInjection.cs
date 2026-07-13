@@ -32,6 +32,11 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ??
                 throw new InvalidOperationException("La configuración  JWT es obligatoria");
 
+            services.AddHttpClient<IBitacoraService, Bitacora.BitacoraService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["Bitacora:BaseUrl"]!);
+            });
+
             services.AddDbContext<ApplicationDbContext>(options => options.
                 UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             /*El método AddIdentity se utiliza para configurar los servicios de identidad en la aplicación. 
@@ -115,6 +120,10 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IEmailVerificationCodeRepository, EmailVerificationCodeRepository>();
             services.AddScoped<ICatNivelAcademicoRepository, CatNivelAcademicoRepository>();
             services.AddScoped<IMapUserPerfilAcademicoRepository, MapUserPerfilAcademicoRepository>();
+            // Registra los repositorios del módulo de matrícula.
+            services.AddScoped<ICatPeriodoRepository, CatPeriodoRepository>();
+            services.AddScoped<IMapInstitucionPeriodoRepository, MapInstitucionPeriodoRepository>();
+            services.AddScoped<IReporteMatriculaRepository, ReporteMatriculaRepository>();
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();

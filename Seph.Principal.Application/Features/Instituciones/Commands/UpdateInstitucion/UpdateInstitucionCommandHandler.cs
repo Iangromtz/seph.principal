@@ -8,6 +8,8 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.UpdateInsti
 {
     public sealed class UpdateInstitucionCommandHandler(
         IInstitucionRepository institucionRepository,
+        IBitacoraService bitacoraService,
+        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateInstitucionCommand, ResponseWrapper<InstitucionDto>>
     {
         public async Task<ResponseWrapper<InstitucionDto>> Handle(
@@ -34,6 +36,15 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.UpdateInsti
 
             institucionRepository.Update(institucion);
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+                "Institucion",
+                institucion.Id.ToString(),
+                "Editar",
+                currentUserService.UserId?.ToString() ?? "desconocido",
+                currentUserService.Email ?? "desconocido",
+                institucion,
+                cancellationToken);
 
             var dto = new InstitucionDto(
                 institucion.Id,
