@@ -8,6 +8,8 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.ReactivateI
 {
     public sealed class ReactivateInstitucionCommandHandler(
         IInstitucionRepository institucionRepository,
+        IBitacoraService bitacoraService,
+        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork) : IRequestHandler<ReactivateInstitucionCommand, ResponseWrapper<string>>
     {
         public async Task<ResponseWrapper<string>> Handle(
@@ -26,6 +28,15 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.ReactivateI
 
             institucionRepository.Update(institucion);
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+                "Institucion",
+                institucion.Id.ToString(),
+                "Activar",
+                currentUserService.UserId?.ToString() ?? "desconocido",
+                currentUserService.Email ?? "desconocido",
+                institucion,
+                cancellationToken);
 
             return ResponseFactory.Success(
                 "Institución reactivada correctamente",

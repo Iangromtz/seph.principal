@@ -9,6 +9,8 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.DeactivateI
     public sealed class DeactivateInstitucionCommandHandler(
         IInstitucionRepository institucionRepository,
         IIdentityService identityService,
+        IBitacoraService bitacoraService,
+        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork) : IRequestHandler<DeactivateInstitucionCommand, ResponseWrapper<string>>
     {
         public async Task<ResponseWrapper<string>> Handle(
@@ -36,6 +38,15 @@ namespace Seph.Principal.Application.Features.Instituciones.Commands.DeactivateI
 
             institucionRepository.Update(institucion);
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+                "Institucion",
+                institucion.Id.ToString(),
+                "Desactivar",
+                currentUserService.UserId?.ToString() ?? "desconocido",
+                currentUserService.Email ?? "desconocido",
+                institucion,
+                cancellationToken);
 
             return ResponseFactory.Success(
                 "Institución desactivada correctamente",

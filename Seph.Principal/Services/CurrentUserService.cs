@@ -17,7 +17,8 @@ namespace Seph.Principal.Services
             }
         }
 
-        public string? Email => httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Email);
+        public string? Email => httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Email)
+         ?? httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
         public string? IpAddress => httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
         public string? DeviceId => httpContextAccessor.HttpContext?.Request.Headers["X-Device-Id"].FirstOrDefault();
 

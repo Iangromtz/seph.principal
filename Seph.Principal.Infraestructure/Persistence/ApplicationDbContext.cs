@@ -22,6 +22,12 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<MapUserPerfilAcademico> MapUserPerfilesAcademicos => Set<MapUserPerfilAcademico>();
         public DbSet<MapEmpleadoPerfilAcademico> MapEmpleadoPerfilesAcademicos => Set<MapEmpleadoPerfilAcademico>();
         public DbSet<HistorialContrato> HistorialContratos => Set<HistorialContrato>();
+        // Catálogo de periodos disponibles para captura.
+        public DbSet<CatPeriodo> CatPeriodos => Set<CatPeriodo>();
+        // Relación entre institución y periodo habilitado.
+        public DbSet<MapInstitucionPeriodo> MapInstitucionPeriodos => Set<MapInstitucionPeriodo>();
+        // Reporte de matrícula registrado por institución y periodo.
+        public DbSet<ReporteMatricula> ReporteMatriculas => Set<ReporteMatricula>();
         public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();
 
         protected override void OnModelCreating(ModelBuilder builder)
