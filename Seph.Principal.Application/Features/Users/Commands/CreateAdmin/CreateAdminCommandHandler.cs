@@ -11,7 +11,9 @@ namespace Seph.Principal.Application.Features.Users.Commands.CreateAdmin
     public sealed class CreateAdminCommandHandler(
     IIdentityService identityService,
     IMapUserPerfilAcademicoRepository mapUserPerfilAcademicoRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IBitacoraService bitacoraService,
+    ICurrentUserService currentUserService)
     : IRequestHandler<CreateAdminCommand, ResponseWrapper<UserCreatedDto>>
     {
         private const string AdminRole = "Admin";
@@ -33,6 +35,17 @@ namespace Seph.Principal.Application.Features.Users.Commands.CreateAdmin
             }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var enlace = await identityService.GetUserByIdRawAsync(userId.Value, cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+                "EnlaceAcademico",
+                userId.Value.ToString(),
+                "Agregar",
+                currentUserService.UserId?.ToString() ?? "desconocido",
+                currentUserService.Email ?? "desconocido",
+                enlace,
+                cancellationToken);
 
             var dto = new UserCreatedDto(userId.Value, request.Email, request.FullName, AdminRole, request.IdInstitucion);
             return ResponseFactory.Success(dto, "Enlace académico registrado correctamente");

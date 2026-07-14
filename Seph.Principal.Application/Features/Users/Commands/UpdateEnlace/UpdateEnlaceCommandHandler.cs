@@ -10,7 +10,9 @@ namespace Seph.Principal.Application.Features.Users.Commands.UpdateEnlace
     public sealed class UpdateEnlaceCommandHandler(
         IIdentityService identityService,
         IMapUserPerfilAcademicoRepository mapUserPerfilAcademicoRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IBitacoraService bitacoraService,
+        ICurrentUserService currentUserService)
         : IRequestHandler<UpdateEnlaceCommand, ResponseWrapper<string>>
     {
         public async Task<ResponseWrapper<string>> Handle(UpdateEnlaceCommand request, CancellationToken cancellationToken)
@@ -34,6 +36,17 @@ namespace Seph.Principal.Application.Features.Users.Commands.UpdateEnlace
             }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var enlace = await identityService.GetUserByIdRawAsync(request.Id, cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+                "EnlaceAcademico",
+                request.Id.ToString(),
+                "Editar",
+                currentUserService.UserId?.ToString() ?? "desconocido",
+                currentUserService.Email ?? "desconocido",
+                enlace,
+                cancellationToken);
 
             return ResponseFactory.Success(
                 "Enlace académico actualizado correctamente",
