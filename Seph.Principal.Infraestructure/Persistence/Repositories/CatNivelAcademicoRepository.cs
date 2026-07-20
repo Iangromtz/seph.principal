@@ -25,5 +25,15 @@ namespace Seph.Principal.Infraestructure.Persistence.Repositories
                 .OrderBy(x => x.StrValor)
                 .ToListAsync(cancellationToken);
         }
+        public async Task<CatNivelAcademico?> GetByIdAsync(
+          long id,
+           CancellationToken cancellationToken)
+         {
+            return await _context.CatNivelAcademicos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    x => x.Id == id,
+                    cancellationToken);
+        }
     }
 }

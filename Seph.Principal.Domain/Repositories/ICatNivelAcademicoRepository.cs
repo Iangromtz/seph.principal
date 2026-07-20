@@ -10,5 +10,7 @@ namespace Seph.Principal.Domain.Repositories
     public interface ICatNivelAcademicoRepository
     {
         Task<IReadOnlyList<CatNivelAcademico>> GetAllAsync(CancellationToken cancellationToken);
+
+        Task<CatNivelAcademico?> GetByIdAsync(long id,CancellationToken cancellationToken);
     }
 }
