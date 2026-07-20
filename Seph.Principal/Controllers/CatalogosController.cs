@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Seph.Principal.Application.Features.CatArea.Queries.GetArea;
+using Seph.Principal.Application.Features.CatDiscapacitado.Queries.GetDiscapacitado;
+using Seph.Principal.Application.Features.CatInternet.Queries.GetInternet;
 using Seph.Principal.Application.Features.CatMunicipio.Queries.GetCatMunicipio;
 using Seph.Principal.Application.Features.CatNivelAcademico.Queries.GetCatNivelAcademico;
 using Seph.Principal.Application.Features.CatPerfilAcademico.Queries.GetCatPerfilAcademico;
@@ -68,6 +70,23 @@ namespace Seph.Principal.Controllers
         public async Task<IActionResult> GetNivelesAcademicos(CancellationToken cancellationToken)
         {
             var response = await sender.Send(new GetCatNivelAcademicoQuery(), cancellationToken);
+            return Ok(response);
+        }
+
+        [HttpGet("internet")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetInternet(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GetCatInternetQuery(), cancellationToken);
+            return Ok(response);
+        }
+
+
+        [HttpGet("discapacitados")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDiscapacitados(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(new GetCatDiscapacitadoQuery(), cancellationToken);
             return Ok(response);
         }
 

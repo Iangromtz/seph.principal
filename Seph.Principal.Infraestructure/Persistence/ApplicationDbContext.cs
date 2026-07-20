@@ -19,6 +19,9 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<CatPerfilAcademico> CatPerfilesAcademicos => Set<CatPerfilAcademico>();
         public DbSet<CatMunicipio> CatMunicipios => Set<CatMunicipio>();
         public DbSet<CatNivelAcademico> CatNivelAcademicos => Set<CatNivelAcademico>();
+        public DbSet<CatDiscapacitado> CatDiscapacitados => Set<CatDiscapacitado>();
+        public DbSet<CatInternet> CatInternets => Set<CatInternet>();
+
         public DbSet<MapUserPerfilAcademico> MapUserPerfilesAcademicos => Set<MapUserPerfilAcademico>();
         public DbSet<MapEmpleadoPerfilAcademico> MapEmpleadoPerfilesAcademicos => Set<MapEmpleadoPerfilAcademico>();
         public DbSet<HistorialContrato> HistorialContratos => Set<HistorialContrato>();
@@ -28,6 +31,10 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<MapInstitucionPeriodo> MapInstitucionPeriodos => Set<MapInstitucionPeriodo>();
         // Reporte de matrícula registrado por institución y periodo.
         public DbSet<ReporteMatricula> ReporteMatriculas => Set<ReporteMatricula>();
+        // Reporte de personal registrado por institución y periodo.
+        public DbSet<ReportePersonal> ReportePersonales => Set<ReportePersonal>();
+        // Reporte de infraestructura registrado por institución y periodo.
+        public DbSet<ReporteInfraestructura> ReporteInfraestructuras => Set<ReporteInfraestructura>();
         public DbSet<EmailVerificationCode> EmailVerificationCodes => Set<EmailVerificationCode>();
 
         protected override void OnModelCreating(ModelBuilder builder)
