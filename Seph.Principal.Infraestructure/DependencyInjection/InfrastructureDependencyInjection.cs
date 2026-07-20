@@ -109,9 +109,12 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<ICatSexoRepository, CatSexoRepository>();
             services.AddScoped<ICatTipoPersonalRepository, CatTipoRepository>();
             services.AddScoped<ICatTipoContratoRepository, CatTipoContratoRepository>();
+            services.AddScoped<ICatDiscapacitadoRepository, CatDiscapacitadoRepository>();
             services.AddScoped<ICatAreaRepository, CatAreaRepository>();
             services.AddScoped<ICatMunicipioRepository, CatMunicipioRepository>();
             services.AddScoped<ICatPerfilAcademicoRepository, CatPerfilAcademicoRepository>();
+            services.AddScoped<ICatInternetRepository, CatInternetRepository>();
+            services.AddScoped<ICatDiscapacitadoRepository, CatDiscapacitadoRepository>();
             services.AddScoped<IMapEmpleadoPerfilAcademicoRepository, MapEmpleadoPerfilAcademicoRepository>();
             services.AddScoped<IHistorialContratoRepository, HistorialContratoRepository>();
             services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
@@ -124,6 +127,11 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<ICatPeriodoRepository, CatPeriodoRepository>();
             services.AddScoped<IMapInstitucionPeriodoRepository, MapInstitucionPeriodoRepository>();
             services.AddScoped<IReporteMatriculaRepository, ReporteMatriculaRepository>();
+            // Registra el repositorio del módulo de personal.
+            services.AddScoped<IReportePersonalRepository, ReportePersonalRepository>();
+
+            // Registra el repositorio del módulo de infraestructura.
+            services.AddScoped<IReporteInfraestructuraRepository, ReporteInfraestructuraRepository>();
 
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();

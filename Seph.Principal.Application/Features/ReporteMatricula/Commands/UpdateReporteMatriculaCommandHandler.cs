@@ -14,7 +14,9 @@ namespace Seph.Principal.Application.Features.ReporteMatricula.Commands
 {
     public sealed class UpdateReporteMatriculaCommandHandler(
         IReporteMatriculaRepository reporteMatriculaRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IBitacoraService bitacoraService,
+        ICurrentUserService currentUserService)
         : IRequestHandler<
             UpdateReporteMatriculaCommand,
             ResponseWrapper<ReporteMatriculaDto>>
@@ -51,6 +53,15 @@ namespace Seph.Principal.Application.Features.ReporteMatricula.Commands
             reporteMatriculaRepository.Update(reporte);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await bitacoraService.RegistrarAsync(
+    "Matricula",
+    reporte.Id.ToString(),
+    "Editar",
+    currentUserService.UserId?.ToString() ?? "desconocido",
+    currentUserService.Email?.ToString() ?? "desconocido",
+    reporte,
+    cancellationToken);
 
             var dto = new ReporteMatriculaDto(
                 reporte.Id,
