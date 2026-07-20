@@ -11,6 +11,7 @@ namespace Seph.Principal.Domain.Entities
         public long Id { get; set; }
 
         public string StrValor { get; set; } = string.Empty;
+        public string StrDescripcion { get; set; } = string.Empty;
 
         public int IntAnio { get; set; }
 
@@ -32,6 +33,7 @@ namespace Seph.Principal.Domain.Entities
         public CatPeriodo(
             long id,
             string strValor,
+            string strDescripcion,
             int intAnio,
             int intNumeroPeriodo,
             DateTime dateFechaInicio,
@@ -40,6 +42,7 @@ namespace Seph.Principal.Domain.Entities
         {
             Id = id;
             StrValor = strValor;
+            StrDescripcion = strDescripcion;
             IntAnio = intAnio;
             IntNumeroPeriodo = intNumeroPeriodo;
             DateFechaInicio = dateFechaInicio;

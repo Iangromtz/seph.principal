@@ -42,6 +42,36 @@ namespace Seph.Principal.Infraestructure.Persistence.Repositories
                     cancellationToken);
         }
 
+        /* Valida si ya existe un periodo con el mismo año
+y número de periodo. */
+        public async Task<bool> ExistsByAnioNumeroPeriodoAsync(
+            int intAnio,
+            int intNumeroPeriodo,
+            CancellationToken cancellationToken)
+        {
+            return await _context.CatPeriodos
+                .AsNoTracking()
+                .AnyAsync(
+                    x => x.IntAnio == intAnio
+                        && x.IntNumeroPeriodo == intNumeroPeriodo,
+                    cancellationToken);
+        }
+        /* Valida si existe otro periodo con el mismo año y número,
+excluyendo el registro que se está actualizando. */
+        public async Task<bool> ExistsByAnioNumeroPeriodoExceptIdAsync(
+            int intAnio,
+            int intNumeroPeriodo,
+            long id,
+            CancellationToken cancellationToken)
+        {
+            return await _context.CatPeriodos
+                .AsNoTracking()
+                .AnyAsync(
+                    x => x.IntAnio == intAnio
+                        && x.IntNumeroPeriodo == intNumeroPeriodo
+                        && x.Id != id,
+                    cancellationToken);
+        }
         public async Task AddAsync(CatPeriodo catPeriodo, CancellationToken cancellationToken)
         {
             await _context.CatPeriodos.AddAsync(

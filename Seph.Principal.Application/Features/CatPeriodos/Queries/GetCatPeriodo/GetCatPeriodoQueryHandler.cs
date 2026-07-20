@@ -10,21 +10,26 @@ using Seph.Principal.Domain.Repositories;
 
 namespace Seph.Principal.Application.Features.CatPeriodos.Queries.GetCatPeriodo
 {
-    public sealed class GetCatPeriodoQueryHandler(ICatPeriodoRepository catPeriodoRepository)
-         : IRequestHandler<GetCatPeriodoQuery, ResponseWrapper<IReadOnlyList<CatPeriodoDto>>>
+    public sealed class GetCatPeriodoQueryHandler(
+         ICatPeriodoRepository catPeriodoRepository)
+         : IRequestHandler<
+             GetCatPeriodoQuery,
+             ResponseWrapper<IReadOnlyList<CatPeriodoDto>>>
     {
         public async Task<ResponseWrapper<IReadOnlyList<CatPeriodoDto>>> Handle(
             GetCatPeriodoQuery request,
             CancellationToken cancellationToken)
         {
             // Consulta los periodos registrados en el catálogo.
-            var catPeriodo = await catPeriodoRepository.GetAllAsync(cancellationToken);
+            var catPeriodo = await catPeriodoRepository.GetAllAsync(
+                cancellationToken);
 
-            // Convierte la entidad del dominio a DTO para responder al cliente.
+            // Convierte las entidades del dominio a DTO.
             IReadOnlyList<CatPeriodoDto> response = catPeriodo
                 .Select(x => new CatPeriodoDto(
                     x.Id,
                     x.StrValor,
+                    x.StrDescripcion,
                     x.IntAnio,
                     x.IntNumeroPeriodo,
                     x.DateFechaInicio,
@@ -34,7 +39,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Queries.GetCatPeriodo
 
             return ResponseFactory.Success(
                 response,
-                "Catalogo de Periodos obtenido correctamente");
+                "Catálogo de periodos obtenido correctamente");
         }
     }
 }

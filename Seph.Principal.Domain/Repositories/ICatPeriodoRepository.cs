@@ -13,6 +13,20 @@ namespace Seph.Principal.Domain.Repositories
 
         Task<CatPeriodo?> GetByIdAsync(long id, CancellationToken cancellationToken);
 
+        /* Valida si ya existe un periodo con el mismo año
+        y número de periodo, para evitar registros duplicados. */
+        Task<bool> ExistsByAnioNumeroPeriodoAsync(
+            int intAnio,
+            int intNumeroPeriodo,
+            CancellationToken cancellationToken);
+
+        /* Valida si existe otro periodo con el mismo año y número,
+excluyendo el registro que actualmente se está editando. */
+        Task<bool> ExistsByAnioNumeroPeriodoExceptIdAsync(
+            int intAnio,
+            int intNumeroPeriodo,
+            long id,
+            CancellationToken cancellationToken);
         Task AddAsync(CatPeriodo catPeriodo, CancellationToken cancellationToken);
 
         void Update(CatPeriodo catPeriodo);

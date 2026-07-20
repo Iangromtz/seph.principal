@@ -9,6 +9,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.DTOs
     public sealed record CatPeriodoDto(
         long Id,
         string StrNombre,
+        string StrDescripcion,
         int IntAnio,
         int IntNumeroPeriodo,
         DateTime DateFechaInicio,
