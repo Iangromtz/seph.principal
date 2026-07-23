@@ -34,7 +34,9 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Queries.GetCatPeriodo
                     x.IntNumeroPeriodo,
                     x.DateFechaInicio,
                     x.DateFechaFin,
-                    x.BitActivo))
+                    x.BitActivo,
+                    x.IdTipoPeriodo,
+                    x.TipoPeriodo.StrValor))
                 .ToList();
 
             return ResponseFactory.Success(

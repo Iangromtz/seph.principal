@@ -32,6 +32,7 @@ namespace Seph.Principal.Controllers
                     request.IntAnio,
                     request.IntNumeroPeriodo,
                     request.DateFechaInicio,
+                    request.IdTipoPeriodo,
                     request.DateFechaFin),
                 cancellationToken);
 
@@ -60,6 +61,7 @@ namespace Seph.Principal.Controllers
                     request.IntAnio,
                     request.IntNumeroPeriodo,
                     request.DateFechaInicio,
+                    request.IdTipoPeriodo,
                     request.DateFechaFin),
                 cancellationToken);
 

@@ -125,6 +125,7 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IMapUserPerfilAcademicoRepository, MapUserPerfilAcademicoRepository>();
             // Registra los repositorios del módulo de matrícula.
             services.AddScoped<ICatPeriodoRepository, CatPeriodoRepository>();
+            services.AddScoped<ICatTipoPeriodoRepository, CatTipoPeriodoRepository>();
             services.AddScoped<IMapInstitucionPeriodoRepository, MapInstitucionPeriodoRepository>();
             services.AddScoped<IReporteMatriculaRepository, ReporteMatriculaRepository>();
             // Registra el repositorio del módulo de personal.

@@ -14,5 +14,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.DTOs
         int IntNumeroPeriodo,
         DateTime DateFechaInicio,
         DateTime DateFechaFin,
-        bool BitActivo);
+        bool BitActivo,
+        long IdTipoPeriodo,
+        string StrTipoPeriodo);
 }

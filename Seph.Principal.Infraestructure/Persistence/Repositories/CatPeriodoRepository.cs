@@ -29,19 +29,22 @@ namespace Seph.Principal.Infraestructure.Persistence.Repositories
         {
             return await _context.CatPeriodos
                 .AsNoTracking()
+                .Include(x => x.TipoPeriodo)
                 .OrderBy(x => x.IntAnio)
                 .ThenBy(x => x.IntNumeroPeriodo)
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<CatPeriodo?> GetByIdAsync(long id, CancellationToken cancellationToken)
+        public async Task<CatPeriodo?> GetByIdAsync(
+          long id,
+          CancellationToken cancellationToken)
         {
             return await _context.CatPeriodos
+                .Include(x => x.TipoPeriodo)
                 .FirstOrDefaultAsync(
                     x => x.Id == id,
                     cancellationToken);
         }
-
         /* Valida si ya existe un periodo con el mismo año
 y número de periodo. */
         public async Task<bool> ExistsByAnioNumeroPeriodoAsync(

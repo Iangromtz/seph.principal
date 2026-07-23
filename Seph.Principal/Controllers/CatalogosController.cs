@@ -10,6 +10,7 @@ using Seph.Principal.Application.Features.CatNivelAcademico.Queries.GetCatNivelA
 using Seph.Principal.Application.Features.CatPerfilAcademico.Queries.GetCatPerfilAcademico;
 using Seph.Principal.Application.Features.CatSexo.Queries.GetCatsexo;
 using Seph.Principal.Application.Features.CatTipoContrato.Queries.GetCatTipoContrato;
+using Seph.Principal.Application.Features.CatTipoPeriodo.Queries;
 using Seph.Principal.Application.Features.CatTipoPersonal.Queries.GetCatTipoPersonal;
 
 namespace Seph.Principal.Controllers
@@ -90,5 +91,16 @@ namespace Seph.Principal.Controllers
             return Ok(response);
         }
 
+        [HttpGet("tipos-periodo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTiposPeriodo(
+    CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(
+                new GetCatTipoPeriodoQuery(),
+                cancellationToken);
+
+            return Ok(response);
+        }
     }
 }

@@ -9,9 +9,11 @@ using Seph.Principal.Domain.Entities;
 
 namespace Seph.Principal.Infraestructure.Persistence.Configurations
 {
-    public sealed class CatPeriodoConfiguration : IEntityTypeConfiguration<CatPeriodo>
+    public sealed class CatPeriodoConfiguration
+      : IEntityTypeConfiguration<CatPeriodo>
     {
-        public void Configure(EntityTypeBuilder<CatPeriodo> builder)
+        public void Configure(
+            EntityTypeBuilder<CatPeriodo> builder)
         {
             builder.ToTable("CatPeriodo");
 
@@ -21,7 +23,11 @@ namespace Seph.Principal.Infraestructure.Persistence.Configurations
                 .ValueGeneratedOnAdd();
 
             builder.Property(x => x.StrValor)
-                .HasMaxLength(50)
+                .HasMaxLength(30)
+                .IsRequired();
+
+            builder.Property(x => x.StrDescripcion)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.IntAnio)
@@ -31,13 +37,35 @@ namespace Seph.Principal.Infraestructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(x => x.DateFechaInicio)
+                .HasColumnType("date")
                 .IsRequired();
 
             builder.Property(x => x.DateFechaFin)
+                .HasColumnType("date")
                 .IsRequired();
 
             builder.Property(x => x.BitActivo)
                 .IsRequired();
+
+            builder.Property(x => x.IdTipoPeriodo)
+                .IsRequired();
+
+            /* Un tipo de periodo puede estar relacionado
+            con varios periodos. */
+            builder.HasOne(x => x.TipoPeriodo)
+                .WithMany()
+                .HasForeignKey(x => x.IdTipoPeriodo)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            /* Evita duplicar el mismo número de periodo
+            dentro de un mismo año. */
+            builder.HasIndex(
+                x => new
+                {
+                    x.IntAnio,
+                    x.IntNumeroPeriodo
+                })
+                .IsUnique();
         }
     }
 }
