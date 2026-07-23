@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Seph.Principal.Application.Common.Interfaces;
+using Seph.Principal.Domain.Entities;
 using Seph.Principal.Domain.Repositories;
 using Seph.Principal.Infraestructure.Authentication;
 using Seph.Principal.Infraestructure.Authorization;
@@ -115,6 +116,8 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<ICatPerfilAcademicoRepository, CatPerfilAcademicoRepository>();
             services.AddScoped<ICatInternetRepository, CatInternetRepository>();
             services.AddScoped<ICatDiscapacitadoRepository, CatDiscapacitadoRepository>();
+            services.AddScoped<ICatSectorVinculadoRepository, CatSectorVinculadoRepository>();
+            services.AddScoped<ICatMecanismoSeguimientoRepository, CatMecanismoSeguimientoRepository>();
             services.AddScoped<IMapEmpleadoPerfilAcademicoRepository, MapEmpleadoPerfilAcademicoRepository>();
             services.AddScoped<IHistorialContratoRepository, HistorialContratoRepository>();
             services.Configure<GoogleOptions>(configuration.GetSection(GoogleOptions.SectionName));
@@ -130,10 +133,10 @@ namespace Seph.Principal.Infraestructure.DependencyInjection
             services.AddScoped<IReporteMatriculaRepository, ReporteMatriculaRepository>();
             // Registra el repositorio del módulo de personal.
             services.AddScoped<IReportePersonalRepository, ReportePersonalRepository>();
-
             // Registra el repositorio del módulo de infraestructura.
             services.AddScoped<IReporteInfraestructuraRepository, ReporteInfraestructuraRepository>();
-
+            services.AddScoped<IReporteVinculacionRepository, ReporteVinculacionRepository>();
+            services.AddScoped<ISectorVinculadoVinculacionRepository,SectorVinculadoVinculacionRepository>();
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
