@@ -18,6 +18,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
         int IntAnio,
         int IntNumeroPeriodo,
         DateTime DateFechaInicio,
+        long IdTipoPeriodo,
         DateTime DateFechaFin)
         : IRequest<ResponseWrapper<CatPeriodoDto>>;
 }

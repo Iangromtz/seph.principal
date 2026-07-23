@@ -14,13 +14,14 @@ using Seph.Principal.Domain.Repositories;
 
 namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeriodo
 {
-    /// <summary>
+   /// <summary>
     /// Registra un nuevo periodo en el catálogo.
     /// El nombre visible se genera automáticamente con base
     /// en las fechas de inicio y fin.
     /// </summary>
     public sealed class CreateCatPeriodoCommandHandler(
         ICatPeriodoRepository catPeriodoRepository,
+        ICatTipoPeriodoRepository catTipoPeriodoRepository,
         IBitacoraService bitacoraService,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork)
@@ -30,12 +31,32 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
             CreateCatPeriodoCommand request,
             CancellationToken cancellationToken)
         {
+            // Valida que exista el tipo de periodo seleccionado.
+            var tipoPeriodo = await catTipoPeriodoRepository.GetByIdAsync(
+                request.IdTipoPeriodo,
+                cancellationToken);
+
+            if (tipoPeriodo is null)
+            {
+                return ResponseFactory.Failure<CatPeriodoDto>(
+                    "El tipo de periodo seleccionado no existe.",
+                    HttpStatusCode.BadRequest);
+            }
+
+            if (!tipoPeriodo.BitActivo)
+            {
+                return ResponseFactory.Failure<CatPeriodoDto>(
+                    "El tipo de periodo seleccionado se encuentra inactivo.",
+                    HttpStatusCode.BadRequest);
+            }
+
             // Evita registrar dos veces el mismo número de periodo
             // dentro del mismo año.
-            var exists = await catPeriodoRepository.ExistsByAnioNumeroPeriodoAsync(
-                request.IntAnio,
-                request.IntNumeroPeriodo,
-                cancellationToken);
+            var exists = await catPeriodoRepository
+                .ExistsByAnioNumeroPeriodoAsync(
+                    request.IntAnio,
+                    request.IntNumeroPeriodo,
+                    cancellationToken);
 
             if (exists)
             {
@@ -45,7 +66,8 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
             }
 
             // Genera el identificador corto del periodo.
-            var strValor = $"{request.IntAnio}-{request.IntNumeroPeriodo}";
+            var strValor =
+                $"{request.IntAnio}-{request.IntNumeroPeriodo}";
 
             // Genera la descripción visible a partir de las fechas.
             var strDescripcion = GeneratePeriodName(
@@ -54,26 +76,31 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
 
             var catPeriodo = new CatPeriodo
             {
+                StrValor = strValor,
                 StrDescripcion = strDescripcion,
                 IntAnio = request.IntAnio,
                 IntNumeroPeriodo = request.IntNumeroPeriodo,
                 DateFechaInicio = request.DateFechaInicio,
                 DateFechaFin = request.DateFechaFin,
-                BitActivo = true
+                BitActivo = true,
+                IdTipoPeriodo = request.IdTipoPeriodo
             };
 
             await catPeriodoRepository.AddAsync(
                 catPeriodo,
                 cancellationToken);
 
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(
+                cancellationToken);
 
             await bitacoraService.RegistrarAsync(
                 "CatPeriodo",
                 catPeriodo.Id.ToString(),
                 "Agregar",
-                currentUserService.UserId?.ToString() ?? "desconocido",
-                currentUserService.Email?.ToString() ?? "desconocido",
+                currentUserService.UserId?.ToString()
+                    ?? "desconocido",
+                currentUserService.Email?.ToString()
+                    ?? "desconocido",
                 catPeriodo,
                 cancellationToken);
 
@@ -85,7 +112,9 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
                 catPeriodo.IntNumeroPeriodo,
                 catPeriodo.DateFechaInicio,
                 catPeriodo.DateFechaFin,
-                catPeriodo.BitActivo);
+                catPeriodo.BitActivo,
+                catPeriodo.IdTipoPeriodo,
+                tipoPeriodo.StrValor);
 
             return ResponseFactory.Success(
                 dto,
@@ -108,15 +137,20 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.CreateCatPeri
             var mesFin = culture.DateTimeFormat
                 .GetMonthName(fechaFin.Month);
 
-            mesInicio = char.ToUpper(mesInicio[0]) + mesInicio[1..];
-            mesFin = char.ToUpper(mesFin[0]) + mesFin[1..];
+            mesInicio =
+                char.ToUpper(mesInicio[0]) + mesInicio[1..];
+
+            mesFin =
+                char.ToUpper(mesFin[0]) + mesFin[1..];
 
             if (fechaInicio.Year == fechaFin.Year)
             {
                 return $"{mesInicio} - {mesFin} {fechaInicio.Year}";
             }
 
-            return $"{mesInicio} {fechaInicio.Year} - {mesFin} {fechaFin.Year}";
+            return
+                $"{mesInicio} {fechaInicio.Year} - " +
+                $"{mesFin} {fechaFin.Year}";
         }
     }
 }

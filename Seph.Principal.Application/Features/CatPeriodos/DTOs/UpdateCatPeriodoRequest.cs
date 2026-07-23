@@ -15,5 +15,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.DTOs
         int IntAnio,
         int IntNumeroPeriodo,
         DateTime DateFechaInicio,
-        DateTime DateFechaFin);
+        DateTime DateFechaFin,
+        long IdTipoPeriodo
+        );
 }

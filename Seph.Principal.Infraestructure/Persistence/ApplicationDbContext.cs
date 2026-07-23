@@ -27,6 +27,8 @@ namespace Seph.Principal.Infraestructure.Persistence
         public DbSet<HistorialContrato> HistorialContratos => Set<HistorialContrato>();
         // Catálogo de periodos disponibles para captura.
         public DbSet<CatPeriodo> CatPeriodos => Set<CatPeriodo>();
+        // Catálogo de tipos de periodo.
+        public DbSet<CatTipoPeriodo> CatTiposPeriodo => Set<CatTipoPeriodo>();
         // Relación entre institución y periodo habilitado.
         public DbSet<MapInstitucionPeriodo> MapInstitucionPeriodos => Set<MapInstitucionPeriodo>();
         // Reporte de matrícula registrado por institución y periodo.

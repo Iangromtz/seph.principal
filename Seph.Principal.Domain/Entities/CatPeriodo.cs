@@ -11,6 +11,7 @@ namespace Seph.Principal.Domain.Entities
         public long Id { get; set; }
 
         public string StrValor { get; set; } = string.Empty;
+
         public string StrDescripcion { get; set; } = string.Empty;
 
         public int IntAnio { get; set; }
@@ -22,6 +23,10 @@ namespace Seph.Principal.Domain.Entities
         public DateTime DateFechaFin { get; set; }
 
         public bool BitActivo { get; set; }
+
+        public long IdTipoPeriodo { get; set; }
+
+        public CatTipoPeriodo TipoPeriodo { get; set; } = null!;
 
         #region Constructor
 
@@ -38,7 +43,8 @@ namespace Seph.Principal.Domain.Entities
             int intNumeroPeriodo,
             DateTime dateFechaInicio,
             DateTime dateFechaFin,
-            bool bitActivo)
+            bool bitActivo,
+            long idTipoPeriodo)
         {
             Id = id;
             StrValor = strValor;
@@ -48,6 +54,7 @@ namespace Seph.Principal.Domain.Entities
             DateFechaInicio = dateFechaInicio;
             DateFechaFin = dateFechaFin;
             BitActivo = bitActivo;
+            IdTipoPeriodo = idTipoPeriodo;
         }
 
         public CatPeriodo(string strValor)

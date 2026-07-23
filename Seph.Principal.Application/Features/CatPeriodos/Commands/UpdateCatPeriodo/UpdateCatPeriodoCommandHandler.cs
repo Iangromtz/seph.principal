@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using MediatR;
 using Seph.Principal.Application.Common.Interfaces;
 using Seph.Principal.Application.Common.Models;
@@ -18,6 +13,7 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
     /// </summary>
     public sealed class UpdateCatPeriodoCommandHandler(
         ICatPeriodoRepository catPeriodoRepository,
+        ICatTipoPeriodoRepository catTipoPeriodoRepository,
         IBitacoraService bitacoraService,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork)
@@ -37,6 +33,25 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
                 return ResponseFactory.Failure<CatPeriodoDto>(
                     "No se encontró el periodo solicitado.",
                     HttpStatusCode.NotFound);
+            }
+
+            // Valida que exista el tipo de periodo seleccionado.
+            var tipoPeriodo = await catTipoPeriodoRepository.GetByIdAsync(
+                request.IdTipoPeriodo,
+                cancellationToken);
+
+            if (tipoPeriodo is null)
+            {
+                return ResponseFactory.Failure<CatPeriodoDto>(
+                    "El tipo de periodo seleccionado no existe.",
+                    HttpStatusCode.BadRequest);
+            }
+
+            if (!tipoPeriodo.BitActivo)
+            {
+                return ResponseFactory.Failure<CatPeriodoDto>(
+                    "El tipo de periodo seleccionado se encuentra inactivo.",
+                    HttpStatusCode.BadRequest);
             }
 
             // Verifica que no exista otro periodo con el mismo año y número.
@@ -64,11 +79,13 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
                 catPeriodo.IntNumeroPeriodo,
                 catPeriodo.DateFechaInicio,
                 catPeriodo.DateFechaFin,
-                catPeriodo.BitActivo
+                catPeriodo.BitActivo,
+                catPeriodo.IdTipoPeriodo
             };
 
             // Genera nuevamente los valores automáticos.
-            var strValor = $"{request.IntAnio}-{request.IntNumeroPeriodo}";
+            var strValor =
+                $"{request.IntAnio}-{request.IntNumeroPeriodo}";
 
             var strDescripcion = GeneratePeriodName(
                 request.DateFechaInicio,
@@ -81,17 +98,21 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
             catPeriodo.IntNumeroPeriodo = request.IntNumeroPeriodo;
             catPeriodo.DateFechaInicio = request.DateFechaInicio;
             catPeriodo.DateFechaFin = request.DateFechaFin;
+            catPeriodo.IdTipoPeriodo = request.IdTipoPeriodo;
 
             catPeriodoRepository.Update(catPeriodo);
 
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(
+                cancellationToken);
 
             await bitacoraService.RegistrarAsync(
                 "CatPeriodo",
                 catPeriodo.Id.ToString(),
                 "Actualizar",
-                currentUserService.UserId?.ToString() ?? "desconocido",
-                currentUserService.Email?.ToString() ?? "desconocido",
+                currentUserService.UserId?.ToString()
+                    ?? "desconocido",
+                currentUserService.Email?.ToString()
+                    ?? "desconocido",
                 new
                 {
                     Anterior = datosAnteriores,
@@ -107,7 +128,9 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
                 catPeriodo.IntNumeroPeriodo,
                 catPeriodo.DateFechaInicio,
                 catPeriodo.DateFechaFin,
-                catPeriodo.BitActivo);
+                catPeriodo.BitActivo,
+                catPeriodo.IdTipoPeriodo,
+                tipoPeriodo.StrValor);
 
             return ResponseFactory.Success(
                 dto,
@@ -130,15 +153,21 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.UpdateCatPeri
             var mesFin = culture.DateTimeFormat
                 .GetMonthName(fechaFin.Month);
 
-            mesInicio = char.ToUpper(mesInicio[0]) + mesInicio[1..];
-            mesFin = char.ToUpper(mesFin[0]) + mesFin[1..];
+            mesInicio =
+                char.ToUpper(mesInicio[0]) + mesInicio[1..];
+
+            mesFin =
+                char.ToUpper(mesFin[0]) + mesFin[1..];
 
             if (fechaInicio.Year == fechaFin.Year)
             {
-                return $"{mesInicio} - {mesFin} {fechaInicio.Year}";
+                return
+                    $"{mesInicio} - {mesFin} {fechaInicio.Year}";
             }
 
-            return $"{mesInicio} {fechaInicio.Year} - {mesFin} {fechaFin.Year}";
+            return
+                $"{mesInicio} {fechaInicio.Year} - " +
+                $"{mesFin} {fechaFin.Year}";
         }
     }
 }

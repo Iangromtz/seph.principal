@@ -71,7 +71,9 @@ namespace Seph.Principal.Application.Features.CatPeriodos.Commands.ChangeStatusC
                 catPeriodo.IntNumeroPeriodo,
                 catPeriodo.DateFechaInicio,
                 catPeriodo.DateFechaFin,
-                catPeriodo.BitActivo);
+                catPeriodo.BitActivo,
+                catPeriodo.IdTipoPeriodo,
+                catPeriodo.TipoPeriodo.StrValor);
 
             var message = request.BitActivo
                 ? "Periodo activado correctamente"
