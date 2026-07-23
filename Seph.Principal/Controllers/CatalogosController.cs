@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Seph.Principal.Application.Features.CatArea.Queries.GetArea;
 using Seph.Principal.Application.Features.CatDiscapacitado.Queries.GetDiscapacitado;
 using Seph.Principal.Application.Features.CatInternet.Queries.GetInternet;
+using Seph.Principal.Application.Features.CatMecanismoSeguimiento.Queries.GetMecanismoSeguimiento;
 using Seph.Principal.Application.Features.CatMunicipio.Queries.GetCatMunicipio;
 using Seph.Principal.Application.Features.CatNivelAcademico.Queries.GetCatNivelAcademico;
 using Seph.Principal.Application.Features.CatPerfilAcademico.Queries.GetCatPerfilAcademico;
+using Seph.Principal.Application.Features.CatSectorVinculado.Queries.GetSectorVinculado;
 using Seph.Principal.Application.Features.CatSexo.Queries.GetCatsexo;
 using Seph.Principal.Application.Features.CatTipoContrato.Queries.GetCatTipoContrato;
 using Seph.Principal.Application.Features.CatTipoPeriodo.Queries;
@@ -93,11 +95,32 @@ namespace Seph.Principal.Controllers
 
         [HttpGet("tipos-periodo")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetTiposPeriodo(
-    CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTiposPeriodo(CancellationToken cancellationToken)
         {
             var response = await sender.Send(
                 new GetCatTipoPeriodoQuery(),
+                cancellationToken);
+
+            return Ok(response);
+        }
+
+        [HttpGet("mecanismo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMecanismoSeguimiento(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(
+                new GetCatMecanismoSeguimientoQuery(),
+                cancellationToken);
+
+            return Ok(response);
+        }
+
+        [HttpGet("sector-vinculado")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSectorVinculado(CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(
+                new GetCatSectorVinculadoQuery(),
                 cancellationToken);
 
             return Ok(response);
